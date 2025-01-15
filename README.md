@@ -14,3 +14,5 @@ The model is written in Julia and contains three files:
 5) run.jl calls all files in order to run the model and save output.
 
 Julia packages required to run the code above: JuMP, Ipopt, CSV, DataFrames, Plots
+
+Code developed by Suzana Goncalves Leles and Lara Breithaup.
