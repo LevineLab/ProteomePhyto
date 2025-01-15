@@ -2,7 +2,7 @@
 # Equations defining the proteome allocation model for a phytoplankton cell #
 #---------------------------------------------------------------------------#
 
-# March 2023; by Suzana Goncalves Leles
+# January 2024; by Suzana Goncalves Leles
 
 using JuMP, Ipopt
 
@@ -15,34 +15,38 @@ model = Model(Ipopt.Optimizer)
 @NLparameter(model, DIC == 100.0)          # uM, external dissolved inorganic carbon
 @NLparameter(model, I   == 120.0)          # μmol photon m-2 s-1, irradiance
 
+# Define parameters chosen for sensitivity analyses:
+@NLparameter(model, Ea == 1.0)
+@NLparameter(model, ctag_max == 100000.0)
+
 # Define the unknown variables that we will optimize for.
 @variables(model, begin
-        logμ   , (start = 0.00047)  # 1/minute, log growth rate
-        ptr ≥ 0, (start = 369)      # protein: number of  transporters / um3
-        pri ≥ 0, (start = 703)      # protein: number of ribosomes / um3
-        plb ≥ 0, (start = 337)      # protein: number of lipid biosynthesis pathway proteins / um3
-        pp  ≥ 0, (start = 1585)     # protein: number of photosystems / um3
-        pdp ≥ 0, (start = 228)      # protein: number of damaged photosystems / um3
-        pru ≥ 0, (start = 4241)     # protein: number of rubisco / um3
+        logμ   , (start = 0.00016)  # 1/minute, log growth rate
+        ptr ≥ 0, (start = 654.67)   # protein: number of  transporters / um3
+        pri ≥ 0, (start = 14.23)    # protein: number of ribosomes / um3
+        plb ≥ 0, (start = 86.66)    # protein: number of lipid biosynthesis pathway proteins / um3
+        pp  ≥ 0, (start = 77.34)    # protein: number of photosystems / um3
+        pdp ≥ 0, (start = 26.42)    # protein: number of damaged photosystems / um3
+        pru ≥ 0, (start = 173.34)   # protein: number of rubisco / um3
         pld ≥ 0, (start = 0)        # protein: number of lipid degradation pathway proteins / um3
-        pgl ≥ 0, (start = 1840)     # protein: number of glycolysis pathway prteins / um3
-        pre ≥ 0, (start = 358)      # protein: number of repair proteins / um3
-        cin ≥ 0, (start = 2e6)      # other macromolecule: number of internal nitrogen molecules / um3
-        clm ≥ 0, (start = 1.17e6)   # other macromolecule: number of membrane lipids / um3
-        cic ≥ 0, (start = 2.4e6)    # other macromolecule: number of internal carbon molecules / um3
-        ctag≥ 0, (start = 4.6e6)    # other macromolecule: number of lipid droplets / um3
-        ϕtr ≥ 0, (start = 0.002)    # relative proteome investment in: transporters (unitless)
-        ϕri ≥ 0, (start = 0.07)     # relative proteome investment in: ribosomes (unitless)
-        ϕlb ≥ 0, (start = 0.02)     # relative proteome investment in: lipid biosynthesis (unitless)
-        ϕp  ≥ 0, (start = 0.09)     # relative proteome investment in: photosystems (unitless)
-        ϕru ≥ 0, (start = 0.14)     # relative proteome investment in: rubisco (unitless)
+        pgl ≥ 0, (start = 78.32)    # protein: number of glycolysis pathway prteins / um3
+        pre ≥ 0, (start = 34.51)    # protein: number of repair proteins / um3
+        cin ≥ 0, (start = 73485)    # other macromolecule: number of internal nitrogen molecules / um3
+        clm ≥ 0, (start = 2.3e6)    # other macromolecule: number of membrane lipids / um3
+        cic ≥ 0, (start = 1.19e6)   # other macromolecule: number of internal carbon molecules / um3
+        ctag≥ 0, (start = 2.66e6)   # other macromolecule: number of lipid droplets / um3
+        ϕtr ≥ 0, (start = 0.0618)   # relative proteome investment in: transporters (unitless)
+        ϕri ≥ 0, (start = 0.024)    # relative proteome investment in: ribosomes (unitless)
+        ϕlb ≥ 0, (start = 0.107)    # relative proteome investment in: lipid biosynthesis (unitless)
+        ϕp  ≥ 0, (start = 0.085)    # relative proteome investment in: photosystems (unitless)
+        ϕru ≥ 0, (start = 0.09)     # relative proteome investment in: rubisco (unitless)
         ϕld ≥ 0, (start = 0.00)     # relative proteome investment in: lipid degradation (unitless)
-        ϕgl ≥ 0, (start = 0.15)     # relative proteome investment in: glycolysis (unitless)
-        ϕre ≥ 0, (start = 0.01)     # relative proteome investment in: repair (unitless)
-        β   ≥ 0, (start = 1.7)      # um, cellular volume to surface area ratio
-        αlm ≥ 0, (start = 0.2)      # fraction of lipid synthesis flux used to: synthesize membrane lipids (unitless)
+        ϕgl ≥ 0, (start = 0.107)    # relative proteome investment in: glycolysis (unitless)
+        ϕre ≥ 0, (start = 0.019)    # relative proteome investment in: repair (unitless)
+        β ≥ 0, (start = 0.83)       # um, cellular volume to surface area ratio   
+        αlm ≥ 0, (start = 0.47)     # fraction of lipid synthesis flux used to: synthesize membrane lipids (unitless)
         αld ≥ 0, (start = 0.0)      # fraction of lipid synthesis flux used to: fuel dark respiration (unitless)
-        αtag≥ 0, (start = 0.6)      # fraction of lipid synthesis flux used to: synthesize lipid storage (unitless)
+        αtag≥ 0, (start = 0.529)    # fraction of lipid synthesis flux used to: synthesize lipid storage (unitless)
 end)
 
 # Set the objective: maximize the log growth rate (logμ).
@@ -50,6 +54,8 @@ end)
 
 # Define any intermediate calculations.
 @NLexpressions(model, begin
+        e_u, 2e7/ctag_max                                                                      # energy conversion factor (ATP / photosystem)
+        Etr, Ea/2                                                                              # eV, activation energy nutrient diffusion
         γTa,   exp(Ea*(1.0/(R*Tref) - 1.0/(R*T)))                                              # unitless
         γTd,   exp(Ed*(1.0/(R*Td) - 1.0/(R*T)))                                                # unitless
         γTad,  exp(Etr*(1.0/(R*Tref) - 1.0/(R*T)))                                             # unitless
@@ -62,7 +68,6 @@ end)
         vld, ( kref["ld"] * γTa ) * pld                                                        # molecules of carbon/μm3/min
         vd,  ( kref["d"]  * γTd ) * pp * (ctag_max/ctag)                                       # molecules of photosystems/μm3/min
         vre,  ( kref["re"]  * γTa ) * pre * (pdp/(pdp + pp))                                   # molecules of photosystems/μm3/min
-        #vre, ( kref["re"] * γTa ) * pre * (pdp/(pdp + K["f"]))                                 # molecules of photosystems/μm3/min; alternative approach
         vgl,   ( kref["gl"] * γTa ) * pgl                                                      # molecules of carbon/μm3/min
         vres,  vld + vgl                                                                       # molecules of carbon/μm3/min
         cgu,  vgl / ηguc * td                                                                  # molecules of glucose/μm3 (required to fuel dark respiration)
@@ -72,9 +77,9 @@ end)
                pre*ηre*Qpt + pri*ηri*Qri + (pp + pdp)*ηp*Qp + cot*ηot*Qpt)*ηaac/ηaa + cin      # total number of molecules of nitrogen/um3
         Qc,   (ptr*ηtr + pru*ηru + plb*ηlb + pld*ηld + pgl*ηgl + pre*ηre + (pp + pdp)*ηp + 
               pri*ηri + cot*ηot)*ηaac/ηaa + cic + clm*ηlic + ctag*ηlic + cli*ηlic + cgu*ηguc   # total number of molecules of carbon
-        Qcell, Qn/Qc                                                                           # nitrogen to carbon quota of the cell
         vol,     4/3*π*(β*3)^3                                                                 # um3; cell biovolume
-        ϵ,       1.0 - (pp + pdp) * Vp - cli * Vli - ctag * Vli                                # unitless; fraction of the biovolume not occupied by photosystems nor lipid storage  
+        Qcell, ( (vol - Vnu)*(Qn/Qc) + Vnu * Qpt ) / vol                                       # nitrogen to carbon quota of the cell
+        ϵ,       1.0 - (pp + pdp) * Vp - cli * Vli - ctag * Vli - Vnu/vol                      # unitless; fraction of the biovolume not occupied by photosystems nor lipid storage  
         tot_p,   (pp + pdp)*ηp + pru*ηru + ptr*ηtr + pri*ηri + plb*ηlb + pld*ηld + pgl*ηgl + 
                   pre*ηre + cot*ηot                                                            # Da/μm3, total protein content
         ecost, vtr*e_tr + vri*e_ri + vlb*e_lb + vd*e_u + vre*e_re                              # molecules of energy/μm3/min
@@ -94,9 +99,6 @@ end)
         β * (s_tr * ptr + s_lm * clm) == 1.0                                     # constraint on the volume to surface area ratio of the cell
         pdp / (pdp + pp) == ( ( kref["d"]  * γTd ) * pp * (ctag_max/ctag) ) / ( kref["re"] * γTa * pre ) # damage (vd) and repair (vre) dynamics assuming vd = vre
         ϕp * vri * 1/(ηp/ηaa) - exp(logμ) * (pp + pdp) == 0.0                    # protein: molecules of photosystems/μm3
-        # alternative approach to model folding/unfolding of photosystems:
-        #ϕp * vri * 1/(ηp/ηaa) + vre - vd - exp(logμ) * pp == 0.0                  # protein: functional photosystems/μm3
-        #vd - vre - exp(logμ) * pdp == 0.0                                         # protein: damaged photosystems/μm3
         ϕru * vri * 1/(ηru/ηaa) - exp(logμ) * pru == 0.0                         # protein: rubisco/μm3
         ϕtr  * vri * 1/(ηtr/ηaa)  - exp(logμ) * ptr  == 0.0                      # protein: transporters/μm3
         ϕri * vri * 1/(ηri/ηaa) - exp(logμ) * pri == 0.0                         # protein: ribosomes/μm3
