@@ -97,8 +97,8 @@ function find_comp(r, lower_indecies, higher_indecies)
 end
 
 # Define variable list, v, and variable strings, vs
-vars = [logμ, β, ptr, pri, plb, pdp, pp, pru, pld, pgl, pre, ϕtr, ϕri, ϕlb, ϕp, ϕru, ϕld, ϕgl, ϕre, cin, clm, cic, αld, ctag, αlm, αtag, Qcell, Qc, Qn, vru, vres, vp, vgl, vd, vre, vlb, vld, vri, vtr, vol, tot_p, D, γTa, γTd, γTad, γTm, cli, cgu, ecost, ηaan, ϵ, T, DIN, I, Vnu, ctag_max]
-vs = ["μ", "β", "ptr", "pri", "plb", "pdp", "pp", "pru", "pld", "pgl", "pre", "ϕtr", "ϕri", "ϕlb", "ϕp", "ϕru", "ϕld", "ϕgl", "ϕre", "cin", "clm", "cic", "αld", "ctag", "αlm", "αtag", "Qcell", "Qc", "Qn", "vru", "vres", "vp", "vgl", "vd", "vre", "vlb", "vld", "vri", "vtr", "vol", "tot_p", "D", "γTa", "γTd", "γTad", "γTm", "cli", "cgu", "ecost", "ηaan", "ϵ",  "T", "DIN", "I", "Vnu", "ctag_max"]
+vars = [logμ, β, ptr, pri, plb, pdp, pp, pru, pld, pgl, pre, ϕtr, ϕri, ϕlb, ϕp, ϕru, ϕld, ϕgl, ϕre, cin, clm, cic, αld, ctag, αlm, αtag, Qcell, Qc, Qn, vru, vres, vp, vgl, vd, vre, vlb, vld, vri, vtr, vol, tot_p, D, γTa, γTd, γTad, γTm, cli, cgu, ecost, ηaan, ϵ, T, DIN, I, Ea, ctag_max]
+vs = ["μ", "β", "ptr", "pri", "plb", "pdp", "pp", "pru", "pld", "pgl", "pre", "ϕtr", "ϕri", "ϕlb", "ϕp", "ϕru", "ϕld", "ϕgl", "ϕre", "cin", "clm", "cic", "αld", "ctag", "αlm", "αtag", "Qcell", "Qc", "Qn", "vru", "vres", "vp", "vgl", "vd", "vre", "vlb", "vld", "vri", "vtr", "vol", "tot_p", "D", "γTa", "γTd", "γTad", "γTm", "cli", "cgu", "ecost", "ηaan", "ϵ",  "T", "DIN", "I", "Ea", "ctag_max"]
 
 # Define index in v array where values change from variables to NL expressions
 change_val = findall(x -> x == "Qcell", vs)[1]
@@ -106,7 +106,7 @@ change_val = findall(x -> x == "Qcell", vs)[1]
 reopt = copy(s)
 
 for r in 1:5
-    # Loop through the DIN, Vnu, and ctag_max indecies and reoptimize the model to correct for the values
+    # Loop through the DIN, Ea, and ctag_max indecies and reoptimize the model to correct for the values
     for n in 1:length(change_DIN)
         for v in 1:length(change_Ea)
             for c in 1:length(change_ctag_max)
@@ -152,4 +152,3 @@ for r in 1:5
         end
     end
 end
-
