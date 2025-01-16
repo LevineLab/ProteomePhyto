@@ -12,17 +12,17 @@ using DataFrames
 env = "Temperature (C°)" # should be one of the following: Light, Temperature (C°) or [DIN]
 
 # Set the environmenal parameters (we will run the model for all combinations for the values set below):
-change_DIN = [20.0,0.01]
+change_DIN = [20.0] # [20.0, 0.01]
 change_I = 20.0
 change_T = 273.0 .+ [5.0:1.0:36;] 
 
 # Set the physiological parameters
-change_Ea = collect(range(0.5, stop=1.0, length=10)) 
-change_ctag_max = collect(range(2e6, stop = 2e7, length = 10))
+change_Ea = 1.0 #collect(range(0.5, stop=1.0, length=10)) 
+change_ctag_max = 2e7 #collect(range(2e6, stop = 2e7, length = 10))
 
 # Save variable list and names
-variable_list = [logμ, β, ptr, pri, plb, pdp, pp, pru, pld, pgl, pre, ϕtr, ϕri, ϕlb, ϕp, ϕru, ϕld, ϕgl, ϕre, cin, clm, cic, αld, ctag, αlm, αtag, Qcell, Qc, Qn, vru, vres, vp, vgl, vd, vre, vlb, vld, vri, vtr, vol, tot_p, D, γTa, γTd, γTad, γTm, cli, cgu, ecost, ηaan, ϵ, T, DIN, I, Vnu, ctag_max]
-variable_strings = ["μ", "β", "ptr", "pri", "plb", "pdp", "pp", "pru", "pld", "pgl", "pre", "ϕtr", "ϕri", "ϕlb", "ϕp", "ϕru", "ϕld", "ϕgl", "ϕre", "cin", "clm", "cic", "αld", "ctag", "αlm", "αtag", "Qcell", "Qc", "Qn", "vru", "vres", "vp", "vgl", "vd", "vre", "vlb", "vld", "vri", "vtr", "vol", "tot_p", "D", "γTa", "γTd", "γTad", "γTm", "cli", "cgu", "ecost", "ηaan", "ϵ",  "T", "DIN", "I", "Vnu", "ctag_max"]
+variable_list = [logμ, β, ptr, pri, plb, pdp, pp, pru, pld, pgl, pre, ϕtr, ϕri, ϕlb, ϕp, ϕru, ϕld, ϕgl, ϕre, cin, clm, cic, αld, ctag, αlm, αtag, Qcell, Qc, Qn, vru, vres, vp, vgl, vd, vre, vlb, vld, vri, vtr, vol, tot_p, D, γTa, γTd, γTad, γTm, cli, cgu, ecost, ηaan, ϵ, T, DIN, I, Ea, ctag_max]
+variable_strings = ["μ", "β", "ptr", "pri", "plb", "pdp", "pp", "pru", "pld", "pgl", "pre", "ϕtr", "ϕri", "ϕlb", "ϕp", "ϕru", "ϕld", "ϕgl", "ϕre", "cin", "clm", "cic", "αld", "ctag", "αlm", "αtag", "Qcell", "Qc", "Qn", "vru", "vres", "vp", "vgl", "vd", "vre", "vlb", "vld", "vri", "vtr", "vol", "tot_p", "D", "γTa", "γTd", "γTad", "γTm", "cli", "cgu", "ecost", "ηaan", "ϵ",  "T", "DIN", "I", "Ea", "ctag_max"]
 
 # Define empty dictionary to save values
 s = Dict()
