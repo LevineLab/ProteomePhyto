@@ -8,7 +8,7 @@ include("reopt.jl")
 using CSV
 using DataFrames
 
-vars = ["Qcell", "vru", "vres", "tot_p", "ϕld", "ϕgl", "ϕp", "ϕre", "ϕtr", "ϕlb", "ϕri", "ϕru", "clm", "ptr", "pp", "pdp", "pri", "cli", "cgu", "ctag", "vtr", "Qc", "Qn", "cic", "cin", "vgl", "DIN", "I", "vri", "vlb", "vd", "vre", "D", "ϵ", "pgl", "plb", "pld", "pre", "Vnu", "ctag_max", "αtag"]
+vars = ["Qcell", "vru", "vres", "tot_p", "ϕld", "ϕgl", "ϕp", "ϕre", "ϕtr", "ϕlb", "ϕri", "ϕru", "clm", "ptr", "pp", "pdp", "pri", "cli", "cgu", "ctag", "vtr", "Qc", "Qn", "cic", "cin", "vgl", "DIN", "I", "vri", "vlb", "vd", "vre", "D", "ϵ", "pgl", "plb", "pld", "pre", "Ea", "ctag_max", "αtag"]
 re = Dict()
 
 a = length(change_T)
@@ -29,7 +29,7 @@ for var in vars
     re[var] = re[var][:]
 end
 
-output =  DataFrame("temp" => re["T"][:], "mu" => re["μ"][:], "size" => re["β"][:], "NC" => re["Qcell"][:], "Vnu" => re["Vnu"], "ctag_max" => re["ctag_max"], "phot" => re["vru"][:], "resp" => re["vres"][:], "totp" => re["tot_p"][:], 
+output =  DataFrame("temp" => re["T"][:], "mu" => re["μ"][:], "size" => re["β"][:], "NC" => re["Qcell"][:], "Ea" => re["Ea"], "ctag_max" => re["ctag_max"], "phot" => re["vru"][:], "resp" => re["vres"][:], "totp" => re["tot_p"][:], 
                     "chlvol" => re["chlvol"][:], "ilpd" => re["ϕld"][:], "icbd" => re["ϕgl"][:], "ichl" => re["ϕp"][:], "icha" => re["ϕre"][:], "itr" => re["ϕtr"][:],
                     "ilpb" => re["ϕlb"][:], "irib" => re["ϕri"][:], "irub" => re["ϕru"][:], "clip" => re["clm"][:], "ctr" => re["ptr"][:], "cp" => re["pp"][:], "cup" => re["pdp"][:], 
                     "cri" => re["pri"][:], "cli" => re["cli"][:], "cgu" => re["cgu"][:], "ctag" => re["ctag"][:], "ctot" => re["ctot"][:], "vtr" => re["vtr"][:], 
