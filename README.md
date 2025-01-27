@@ -20,3 +20,5 @@ Code developed by Suzana Goncalves Leles and Lara Breithaup.
 ### Validation of the model against the dataset compiled by Anderson et al. (2021)
 
 We parameterized the model to represent two phytoplankton functional types, cyanobacteria and diatoms. To confirm that our parameter choices mimic the general physiology of cyanobacteria, cold-adapted diatoms, and warm-adapted diatoms, we compared the emergent maximum growth rates and growth (left) slopes of the thermal curves from our model against data from 167 species previously compiled by Anderson et al. (2021). The code for this analysis was developed by Arianna I Krinos and is given as the file estimating_growth_slopes_from_anderson_dataset.R
+
+Anderson, S., Barton, A., Clayton, S., Dutkiewicz, S., and Rynearson, T. (2021). Marine phytoplankton functional types exhibit diverse responses to thermal change. Nature communications, 12(1):6413.404
