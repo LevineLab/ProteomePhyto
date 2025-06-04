@@ -13,7 +13,7 @@ The model is written in Julia (Version 1.5.3) and contains three files:
 4) reopt.jl identifies local minima and helps the optimizer to find the global optima by providing more accurate initial guesses
 5) run.jl calls all files in order to run the model and save output.
 
-Julia packages required to run the code above: JuMP, Ipopt, CSV, DataFrames, Plots
+Julia installation guidelines can be found here (https://docs.julialang.org/en/v1/manual/installation/) and the required packages to run the code above are: JuMP, Ipopt, CSV, DataFrames, Plots
 
 Code developed by Suzana Goncalves Leles and Lara Breithaup.
 
