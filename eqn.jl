@@ -13,7 +13,7 @@ model = Model(Ipopt.Optimizer)
 @NLparameter(model, T   == 20.0 + 273.0)   # K,  temperature
 @NLparameter(model, DIN == 20.0)           # uM, external dissolved inorganic nitrogen
 @NLparameter(model, DIC == 100.0)          # uM, external dissolved inorganic carbon
-@NLparameter(model, I   == 120.0)          # μmol photon m-2 s-1, irradiance
+@NLparameter(model, I   == 1000.0)         # μmol photon m-2 s-1, irradiance
 
 # Define parameters chosen for sensitivity analyses:
 @NLparameter(model, Ea == 1.0)
