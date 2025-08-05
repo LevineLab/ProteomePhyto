@@ -2,7 +2,7 @@
 # Equations defining the proteome allocation model for a phytoplankton cell #
 #---------------------------------------------------------------------------#
 
-# January 2024; by Suzana Goncalves Leles
+# July 28, 2025; by Suzana Goncalves Leles
 
 using JuMP, Ipopt
 
