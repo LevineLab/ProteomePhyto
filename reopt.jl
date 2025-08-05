@@ -1,8 +1,9 @@
-#-------------------------------------------------------------------------#
-# Iterate over 'bad' model values and repoptimize to correct model output #
-#-------------------------------------------------------------------------#
+#------------------------------------------------------------------------#
+# Iterate over 'bad' model values and reoptimize to correct model output #
+#------------------------------------------------------------------------#
 
 # April 2024; by Lara Breithaupt
+
 using LinearAlgebra
 using Statistics
 
