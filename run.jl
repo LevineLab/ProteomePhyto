@@ -22,7 +22,7 @@ time_period = "present"             # takes one of 2: "present" or "future"
 if run_mode == "thermal_curve"
 
     change_DIN = [20.0, 0.1]            # uM, dissolved inorganic nitrogen
-    change_I = 1000.0                   # μmol photon m-2 s-1, irradiance
+    change_I = 300.0                   # μmol photon m-2 s-1, irradiance
     change_T = 273.0 .+ [5.0:1.0:36;]   # K, temperature
     output_filename = "output_$(type)_$(run_mode).csv"
  
