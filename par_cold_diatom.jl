@@ -12,7 +12,7 @@ kref = Dict("tr" => 120.0, "ri" => 114.0, "lb" => 120.0, "p" => 7800.0,
 map!(x -> x*2, values(kref))
 
 # Half-saturation constants for all reactions
-K = Dict("tr" => 60.0, "ri" => 10^4, "lb" => 10^4, "p" => 50,
+K = Dict("tr" => 60.0, "ri" => 10^4, "lb" => 10^4, "p" => 10,
           "ru" => 1.0, "ld" => 10^4, "gl" => 10^4, "re" => 10^4, "d" => 10^4)
 
 # Space and density constraints
