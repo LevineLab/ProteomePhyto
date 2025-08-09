@@ -22,6 +22,11 @@ Open run.jl and follow the steps listed in the file. Briefly, you will need to d
 - type: takes one of 4: "pro" or "syn" or "warm_diatom" or "cold_diatom"
 - run_mode: takes one of 2: "thermal_curve" or "latitudinal"
 - time_period: takes one of two: "present" or "future"
+
+### Plot model output and generate figures
+Model output is organized in different folders:
+- output_thermal_curves: contains model output for the thermal curves for each modeled functional types under nutrient-replete and nutrient-deplete conditions. Run the R script "script_thermal_curves.R" to plot all figures in the manuscript associated with this output.
+- output_latitudinal: contains model output for the latitudinal simulations for each modeled functional types under present and future climate scenarios. Run the R script "script_latitudinal.R" to plot all figures in the manuscript associated with this output.
   
 ### Parameterization of the model against the dataset compiled by Anderson et al. (2021)
 
