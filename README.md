@@ -9,7 +9,7 @@ Our coarse-grained model is built on a constrained optimization problem that aim
 The model is written in Julia (Version 1.5.3) and contains three files: 
 1) par.jl defines the parameter values
 2) eqn.jl defines the model equations
-3) loop.jl runs the model over environmental conditions
+3) loop.jl iterates the model over different environmental conditions/parameters
 4) reopt.jl identifies local minima and helps the optimizer to find the global optima by providing more accurate initial guesses
 5) run.jl calls all files in order to run the model and save output.
 
