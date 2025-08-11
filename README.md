@@ -19,7 +19,7 @@ Code developed by Suzana Goncalves Leles and Lara Breithaup.
 
 ### Step-by-step to run the model
 Open run.jl and follow the steps listed in the file. Briefly, you will need to define:
-- type: takes one of 4: "pro" or "syn" or "warm_diatom" or "cold_diatom"
+- type: takes one of 5: "pro" or "syn" or "warm_diatom" or "cold_diatom" or "sens"
 - run_mode: takes one of 2: "thermal_curve" or "latitudinal"
 - time_period: takes one of two: "present" or "future"
 
