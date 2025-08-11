@@ -27,6 +27,7 @@ Open run.jl and follow the steps listed in the file. Briefly, you will need to d
 Model output is organized in different folders:
 - output_thermal_curves: contains model output for the thermal curves for each modeled functional type under nutrient-replete and nutrient-deplete conditions. Run the R script "script_thermal_curves.R" to plot all figures in the manuscript associated with this output.
 - output_latitudinal: contains model output for the latitudinal simulations for each modeled functional type under present and future climate scenarios. Run the R script "script_lat.R" to plot all figures in the manuscript associated with this output.
+- output_sens: contains model output for the sensitivity analyses. Run the R script "script_sens.R" to plot figure 2 in the manuscript.
   
 ### Parameterization of the model against the dataset compiled by Anderson et al. (2021)
 
