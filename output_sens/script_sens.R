@@ -377,8 +377,8 @@ ptmax <- ggplot(dmax4, aes(x = factor(Ea), y = factor(ctag_max), fill = temp)) +
   geom_raster() +
   scale_fill_gradientn(
     colours = brewer.pal(n = 11, name = "YlOrBr"),
-    limits = c(31.7,34.3), 
-    breaks = c(32, 33, 34),
+    limits = c(32,36), 
+    breaks = c(32, 34, 36),
     name = expression(paste(italic(T[max])," (", degree, "C)", sep = "")),
     guide = guide_colorbar(barwidth = 16, barheight = 1, title.position = "top", title.hjust = 0.5, frame.colour = "black",frame.linewidth = 0.5)) +
   coord_cartesian(expand = FALSE) +
