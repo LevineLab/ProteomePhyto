@@ -27,7 +27,7 @@ if run_mode == "thermal_curve"
     if type == "sens"
         change_T = 273.0 .+ [18.0:0.25:35;]   # K, temperature   
     else
-        change_T = 273.0 .+ [5.0:1.0:36;]     # K, temperature
+        change_T = 273.0 .+ [5.0:0.25:36;]     # K, temperature
     end
 
     output_filename = "output_$(type)_$(run_mode).csv"
