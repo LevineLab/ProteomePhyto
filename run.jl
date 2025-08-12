@@ -1,4 +1,4 @@
-#-----------------------------------------------------#
+#-----------------------------------------------------# 
 # Set parameters and environment and run the model    #
 #-----------------------------------------------------#
 
@@ -8,27 +8,33 @@
 using CSV
 using DataFrames
 
-# STEP 1: Define the phytoplankton functional type 
-type = "pro"                        # takes one of 4: "pro" or "syn" or "warm_diatom" or "cold_diatom"
+# STEP 1: Define the phytoplankton functional type (or sensitivity analysis "sens")
+type = "pro"                        # takes one of 5: "pro" or "syn" or "warm_diatom" or "cold_diatom" or "sens"
 include("par_$(type).jl")              
 
 # STEP 2: Define run mode
-run_mode = "latitudinal"            # takes one of 2: "thermal_curve" or "latitudinal"
+run_mode = "thermal_curve"          # takes one of 2: "thermal_curve" or "latitudinal"
 
 # STEP 3: if running in latitudinal mode, define also the time period
-time_period = "present"             # takes one of 2: "present" or "future"
+time_period = "future"              # takes one of 2: "present" or "future"
 
 # Set the environmenal parameters, run, and save model ouput
 if run_mode == "thermal_curve"
 
-    change_DIN = [20.0, 0.1]            # uM, dissolved inorganic nitrogen
-    change_I = 300.0                    # μmol photon m-2 s-1, irradiance
-    change_T = 273.0 .+ [5.0:0.25:36;]   # K, temperature
+    change_DIN = [20.0, 0.1]                  # uM, dissolved inorganic nitrogen
+    change_I = 300.0                          # μmol photon m-2 s-1, irradiance
+
+    if type == "sens"
+        change_T = 273.0 .+ [18.0:0.25:35;]   # K, temperature   
+    else
+        change_T = 273.0 .+ [5.0:1.0:36;]     # K, temperature
+    end
+
     output_filename = "output_$(type)_$(run_mode).csv"
  
-    include("eqn.jl")                   # defines model equations
-    include("loop.jl")                  # iterates over different conditions
-    include("reopt.jl")                 # corrects for non-optimal solutions
+    include("eqn.jl")                         # defines model equations
+    include("loop.jl")                        # iterates over different conditions
+    include("reopt.jl")                       # corrects for non-optimal solutions
 
     # Reshape variables and save model output as a csv file
     vars = ["Qcell", "vru", "vres", "tot_p", "ϕld", "ϕgl", "ϕp", "ϕre", "ϕtr", "ϕlb", "ϕri", "ϕru", "clm", "ptr", "pp", "pdp", "pri", "cli", "cgu", "ctag", "vtr", "Qc", "Qn", "cic", "cin", "vgl", "DIN", "I", "vri", "vlb", "vd", "vre", "D", "ϵ", "pgl", "plb", "pld", "pre", "Ea", "ctag_max", "αtag"]
