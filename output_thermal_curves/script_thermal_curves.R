@@ -68,6 +68,23 @@ df2 <- df2 %>%
          !(phenotype == "Synechococcus" & DIN2 == "N-replete" & temp %in% c(10.5)),
          !(phenotype == "Synechococcus" & DIN2 == "N-deplete" & temp %in% c(12.25, 13.5, 21)))
 
+# Importing simulations for a larger (> 100um cell diameter) warm-adapted diatom 
+dl <- read.csv("output_warm_diatom_thermal_curve_large.csv")
+dl$phenotype <- rep("Warm-adapted diatom LARGE", nrow(dl))
+
+dl$DIN2 <- factor(dl$DIN, levels = c("20", "0.1"), labels = c("N-replete","N-deplete"))
+
+# Filtering out non-optimal solutions fir the large diatom
+dl2 <- dl %>% 
+  filter(case_when(
+    DIN2 == "N-deplete" ~ NC < 0.3 & NC > 0.04 & size > 0.4 & size < 100 & mu > 1e-3 & mu < 2.0,
+    DIN2 == "N-replete" ~ NC < 0.3 & NC > 0.01 & size > 0.4 & size < 2000 & mu > 7e-2 & mu < 2.0
+  ))
+
+dl2 <- dl2[-c(74,80),]
+
+df2 <- rbind(df2, dl2)
+
 # estimate nitrogen uptake affinity
 df2$radius <- df2$size/2
 df2$cellvol <- 4*pi*(df2$radius^3)/3
@@ -89,7 +106,8 @@ phen_labels <- c(
   "Prochlorococcus" = expression(italic("Prochlorococcus")),
   "Synechococcus"   = expression(italic("Synechococcus")),
   "Warm-adapted diatom" = "Warm-adapted diatom",
-  "Cold-adapted diatom" = "Cold-adapted diatom")
+  "Cold-adapted diatom" = "Cold-adapted diatom",
+  "Warm-adapted diatom LARGE" = "Warm-adapted diatom LARGE")
 
 p1 <- ggplot(data = df2 %>% filter(phenotype == "Warm-adapted diatom"), aes(x = temp, y = mu, linetype = DIN2)) +
   geom_line(size = 1) +
@@ -152,6 +170,20 @@ p1 + p2 + p3 + p4
 
 ggsave("figureS1.png", (p3 + p4 + p1 + p2) + plot_layout(nrow = 1), device = "png", width = 12, height = 3.5, dpi = 600) 
 
+p5 <- ggplot(data = df2 %>% filter(phenotype == "Warm-adapted diatom LARGE"), aes(x = temp, y = mu, linetype = DIN2)) +
+  geom_line(size = 1) +
+  facet_wrap(~ phenotype) +
+  scale_y_continuous(breaks = c(0.0, 0.7, 1.4), labels = scales::number_format(accuracy = 0.1), limits = c(0,1.4)) +
+  scale_x_continuous(breaks = c(10, 20, 30), labels = scales::number_format(accuracy = 1), limits = c(7,33)) +
+  scale_linewidth_manual(values = c(1, 2)) +
+  ylab("") +
+  xlab(expression(paste("Temperature  (", degree,"C)"))) +
+  mytheme +
+  theme(legend.position = "", axis.text.y = element_blank()) +
+  geom_point(data = d1 %>% filter(phenotype == "Warm-adapted diatom LARGE"), aes(x = temp, y = mu), size = 5, color = "#762A83") +
+  geom_vline(data = d1 %>% filter(phenotype == "Warm-adapted diatom LARGE"), aes(xintercept = temp, linetype = DIN2), color = "#762A83", size = 1.0, show.legend = FALSE)
+p1 + p5
+
 ######################################################
 # Model validation against Anderson et al. 2021 data #
 ######################################################
@@ -201,7 +233,7 @@ df2_replete <- df2 %>% filter(DIN2 == "N-replete")
 data_slope <- data.frame(type = df2_replete$phenotype, 
                          Temp = df2_replete$temp,
                          GR = df2_replete$mu) %>%
-  mutate(type = factor(type, levels = c("Cold-adapted diatom", "Warm-adapted diatom", "Prochlorococcus", "Synechococcus")), Curve = as.integer(factor(type))) %>%
+  mutate(type = factor(type, levels = c("Cold-adapted diatom", "Warm-adapted diatom", "Prochlorococcus", "Synechococcus", "Warm-adapted diatom LARGE")), Curve = as.integer(factor(type))) %>%
   relocate(Curve, Temp, GR, .before = type)
 
 # sub-setting model thermal curve data to fit the data to the Norberg equation (just like we did for the Anderson et al. dataset)
@@ -229,17 +261,22 @@ data_slope2 <- data_slope %>%
 
 write.csv(data_slope2, "sample_data.csv", row.names = FALSE)
 
+# Running this script will generate a csv file with the left_slope estimates for our modelled phenotypes
 source("estimating_growth_slope_from_Anderson_dataset.R")
+
+left_slopes <- read.csv("slopes_and_parameters.csv")
 
 dsim <- data.frame(type = c("Pro","Syn", "W-diatom", "C-diatom"),
                    umax = c(0.532, 0.738, 1.26, 0.550),
-                   left_slope = c(0.056, 0.079, 0.13, 0.061),     
+                   left_slope = c(left_slopes[4,7], left_slopes[5,7], left_slopes[2,7], left_slopes[1,7]),     
                    delta_topt = c(0.2, 1.3, 2.3, -3.5),
                    size = c(0.647, 0.685, 5.13, 5.02),
                    sizeNrep = c(0.786, 1.37, 9.89, 8.92))
 
 dsim$type <- factor(dsim$type, levels = c("Pro","Syn", "W-diatom", "C-diatom"))
 
+# Now get data for the large warm-adapted type
+left_slope_large_warm_diatom <- left_slopes[3,7]
 
 p1 <- ggplot(da2, aes(x = type2, y = left_slope, fill = type2)) +
   geom_boxplot(width = 0.5) +
@@ -334,6 +371,7 @@ ggsave("figureS2.png", p4s, device = "png", width = 5, height = 4, dpi = 600)
 
 # Nitrogen uptake
 dvtr <- df2 %>%
+  filter(phenotype != "Warm-adapted diatom LARGE") %>%
   group_by(phenotype, DIN2) %>%
   mutate(vtr_scaled = vtr / max(vtr, na.rm = TRUE)) %>%
   ungroup()
@@ -357,6 +395,8 @@ pnup <- ggplot(dvtr %>% filter(DIN2 == "N-deplete"), aes(x = temp, y = vtr_scale
   annotation_custom(grob = textGrob("C", x = unit(-0.25, "npc"), y = unit(1.15, "npc"),
                                     just = "left", gp = gpar(col = "black", fontsize = 26)))
 pnup
+
+df2 <- df2 %>% filter(phenotype != "Warm-adapted diatom LARGE")
 
 df2$phenotype <- factor(df2$phenotype, levels = c("Prochlorococcus", "Synechococcus", "Warm-adapted diatom", "Cold-adapted diatom"))
 
@@ -540,3 +580,43 @@ pall <- (p1 + p7) / (p2 + p8) / (p3 + p9) / (p5 + p4) / (p6 + p10)
 
 ggsave("figureS3.png", pall, device = "png", width = 11, height = 11, dpi = 600) 
 
+
+# Justifying the differences in heat-mitigation ability between the functional types against empirical evidence
+
+# Empirical data from Figure 5 in Drabkova et al. 2009 (10.1021/es060746i)
+
+drab <- data.frame(ros = rep(c(0.08, 0.15, 0.3),2),
+                   relF0 = c(100, 95, 250, 90, 92, 100),
+                   phenotype = c(rep("cyanobacteria", 3), rep("diatom", 3)))
+
+
+pdrab <- ggplot(drab, aes(x = ros, y = relF0, col = phenotype)) +
+  geom_point(size = 6) +
+  geom_line(size = 2) +
+  scale_color_manual(values = c("#5AAE61", "#762A83")) +
+  ylab("% of control (F0)") +
+  xlab(expression(H[2]*O[2]~(mg~L^{-1}))) +
+  ggtitle("Data from Drabkova et al. (2009)") +
+  mytheme +
+  theme(legend.position = c(0.2, 0.85))
+  
+# Model output: concentration of damaged photosystems
+
+pdamaged <- ggplot(df2 %>% filter(DIN2 == "N-deplete"), aes(x = temp, y = cup, col = phenotype)) +
+  facet_wrap(~DIN2) +
+  geom_line(size = 2) +
+  ylab(expression("damaged photosystems ("*µm^{-3}*")")) +
+  xlab(expression(paste("Temperature  (", degree,"C)"))) +
+  scale_y_continuous(n.breaks = 4) +
+  scale_x_continuous(breaks = c(10, 20, 30), labels = scales::number_format(accuracy = 1), limits = c(8,31)) +
+  scale_color_manual(values = c("#5AAE61", "#00441BFF", "#762A83","#C2A5CF")) +
+  mytheme +
+  ggtitle("Model output") +
+  theme(strip.text = element_blank(), strip.background = element_blank(), 
+        legend.position = c(0.3, 0.85), axis.title.x = element_text(size = 17, colour ="black"),
+        axis.text.x = element_text(size = 16, colour ="black"))
+
+
+pdrab + pdamaged
+
+ggsave("fig_damage.png", pdrab + pdamaged, device = "png", width = 12, height = 6, dpi = 600) 
